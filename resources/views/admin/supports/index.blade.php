@@ -7,6 +7,26 @@
   <title>Suporte</title>
 </head>
 <body>
-  <h1>Suporte</h1>
+  <h1>List supports</h1>
+  <a href="{{ route('supports.create') }}">Create new support</a>
+  <table>
+    <thead>
+      <th>subject</th>
+      <th>status</th>
+      <th>body</th>
+    </thead>
+    <tbody>
+      @foreach ($supports as $support)
+          <tr>
+            <td>{{ $support->subject }}</td>
+            <td>{{ $support->status }}</td>
+            <td>{{ $support->body }}</td>
+            <td>
+              <a href="{{ route('supports.show', $support->id) }}">details</a>
+            </td>
+          </tr>
+      @endforeach
+    </tbody>
+  </table>
 </body>
 </html>
