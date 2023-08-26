@@ -10,20 +10,10 @@
 
 <body>
     <h1>Create support</h1>
+    <x-alert />
     <form action="{{ route('supports.store') }}" method="post">
-        {{-- <input type="hidden" value="{{ csrf_token() }}" name="_token" /> --}}
-        @csrf
-        <input type="text" name="subject" placeholder="Title" />
-        <textarea name="body" cols="30" rows="5" placeholder="Subject"></textarea>
-        <button type="submit">Send</button>
+        @include('admin.supports.partials.form')
     </form>
-
-    @if ($errors->any())
-        @foreach($errors->all() as $error)
-            {{ $error }}
-        @endforeach
-    @endif
-
     <a href="{{ route('supports.index') }}">Back</a>
 </body>
 

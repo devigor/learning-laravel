@@ -2,16 +2,22 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTO\CreateSupportDTO;
+use App\DTO\UpdateSupportDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSupportRequest;
 use App\Models\Support;
 use Illuminate\Http\Request;
+use App\Services\SupportService;
 
 class SupportController extends Controller
 {
-    public function index(Support $support)
+
+    public function __construct(protected SupportService $service) {}
+
+    public function index(Request $request)
     {
-        $supports = $support->all();
+        $supports = $this->service->getAll($request->filter);
         return view('admin.supports.index', compact('supports'));
     }
 
@@ -36,11 +42,7 @@ class SupportController extends Controller
 
     public function store(StoreSupportRequest $request)
     {
-        $data = $request->all();
-        $data['status'] = 'a';
-
-        // insert on db
-        Support::create($data);
+        $this->service->store(CreateSupportDTO::makeFromRequest($request));
 
         return redirect()->route('supports.index');
     }
@@ -56,22 +58,18 @@ class SupportController extends Controller
 
     public function update(StoreSupportRequest $request, Support $support, string|int $id)
     {
-        if (!$support = $support->find($id)) {
+
+        $support = $this->service->update(UpdateSupportDTO::makeFromRequest($request));
+        if (!$support) {
             return back();
         }
-
-        $support->update($request->only(['subject', 'body']));
 
         return redirect()->route('supports.index');
     }
 
-    public function destroy(Support $support, string|int $id)
+    public function destroy(string $id)
     {
-        if (!$support = $support->find($id)) {
-            return back();
-        }
-
-        $support->delete();
+        $this->service->delete($id);
 
         return redirect()->route('supports.index');
     }
